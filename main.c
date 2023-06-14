@@ -109,6 +109,7 @@ int main()
             else{
                 printf("No da tiempo de realizar ninguna tarea\n");
             }*/
+            system("clear");
             tasks_on_time(list);
             getchar();
             getchar();

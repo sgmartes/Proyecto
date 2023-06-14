@@ -700,23 +700,8 @@ void Sort_tasks(DLL *this, int *sort, int *aux)
       DLL_Cursor_next(this);
     }
     int first = 0, last = DLL_Len(this) - 1;
-
-    printf("\n[");
-    for (int i = 0; i < DLL_Len(this); ++i)
-    {
-      printf("%d, ", sort[i]);
-    }
-    printf("]\n\n");
-
     merge_sort(sort, first, last, aux); // Ordena de menor a mayor tiempo
   }
-
-  printf("\n[");
-  for (int i = 0; i < DLL_Len(this); ++i)
-  {
-    printf("%d, ", sort[i]);
-  }
-  printf("]\n\n");
   // return;
 }
 
