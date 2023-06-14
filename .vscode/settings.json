@@ -1,0 +1,12 @@
+{
+    "C_Cpp.errorSquiggles": "disabled",
+    "files.associations": {
+        "*.tcc": "c",
+        "list": "c",
+        "unordered_map": "c",
+        "unordered_set": "c",
+        "algorithm": "c",
+        "complex": "c",
+        "new": "c"
+    }
+}
