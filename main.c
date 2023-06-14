@@ -17,7 +17,7 @@ int main()
         printf("6. Show Pending Tasks\n");
         printf("7. Modify a Task\n");
         printf("8. Show Tasks\n"); // rapida de hacer(antes show list)
-        printf("9. Sort Tasks by time \n");
+        printf("9. Show which tasks i can do \n");
         printf("10. Delete all the Tasks\n"); // rapida de hacer
         printf("11. Exit\n");
         printf("Option: ");
