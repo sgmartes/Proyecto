@@ -761,7 +761,7 @@ void tasks_on_time(DLL *this)
   int acum = 0;
   if (time_bt(this, sort, aux, &index, time, 0, DLL_Len(this) - 1, &acum))
   {
-    printf("You're have enough time to do this tasks:\n");
+    printf("You have enough time to do this tasks:\n");
     print_tasks_on_time(this, aux, index);
   }
   else
