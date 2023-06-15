@@ -351,41 +351,24 @@ bool DLL_Cursor_end(DLL *this)
  *
  * @return Un entero que indica en donde está la llave
  */
-int binary_search(DLL *this, size_t key)
-{
-  DLL_Cursor_front(this);
-  size_t x0 = ((this->cursor)->task).index; // 1
-  DLL_Cursor_back(this);
-  size_t x1 = ((this->cursor)->task).index; // 5
 
-  while (x0 <= x1)
+size_t lineal_search(DLL *this, size_t key)
+{
+  assert(this);
+  assert(this->first); // existan elementos en la lista
+  size_t position = 0;
+  bool found = false;
+
+  for (Node *it = this->first; it != NULL && found == false; it = it->next)
   {
-    DLL_Cursor_front(this);
-    size_t center = (x0 + x1) / 2; // 3
-    for (size_t i = 1; i < center; i++)
+    if (key == (it->task).index)
     {
-      DLL_Cursor_next(this);
-    }
-    if ((this->cursor->task).index == key)
-    {
-      return center;
-    }
-    else if (x1 == x0) // queda un elemento y no fue key
-    {
-      return -1;
-    }
-    else if (key < (this->cursor->task).index)
-    {
-      x1 = center - 1;
-    }
-    else
-    {
-      x0 = center + 1;
+      found = true;
+      position = (it->task).index;
     }
   }
-  return -1;
+  return position;
 }
-
 /**
  * @brief Convierte estate(que es una constante simbólica)  a una palabra de tipo char
  *
@@ -401,6 +384,8 @@ const char *Get_state(eState state)
     return "Pending";
   case COMPLETED:
     return "Completed";
+  default:
+    exit(1);
   }
 }
 
@@ -420,6 +405,7 @@ void Add_task(DLL *this)
   Task.state = PENDING;
   Task.index = (this->len) + 1;
   DLL_Push_back(this, &Task);
+  Show_tasks(this);
 }
 
 /**
@@ -441,20 +427,21 @@ void Show_tasks(DLL *this)
     {
       // Elimina salto de linea de fgets
       (this->cursor->task).name[strcspn((this->cursor->task).name, "\n")] = 0;
-      if ((this->cursor->task).state==PENDING)
-        {
-          printf("%ld Name: %s\t\tEstimated time to complete: %ld min.\t\tState: " ROJO "%s" RESET "\n",
-                 (this->cursor->task).index, (this->cursor->task).name, (this->cursor->task).time,
-                 Get_state((this->cursor->task).state));
-        }
+      if ((this->cursor->task).state == PENDING)
+      {
+        printf("%ld Name: %s\t\tEstimated time to complete: %ld min.\t\tState: " ROJO "%s" RESET "\n",
+               (this->cursor->task).index, (this->cursor->task).name, (this->cursor->task).time,
+               Get_state((this->cursor->task).state));
+      }
       else
       {
         printf("%ld Name: %s\t\tEstimated time to complete: %ld min.\t\tState: " VERDE "%s" RESET "\n",
-                 (this->cursor->task).index, (this->cursor->task).name, (this->cursor->task).time,
-                 Get_state((this->cursor->task).state));
+               (this->cursor->task).index, (this->cursor->task).name, (this->cursor->task).time,
+               Get_state((this->cursor->task).state));
       }
     }
   }
+  printf("\n");
 }
 
 /**
@@ -476,16 +463,16 @@ void Delete_task(DLL *this)
     // 3. *Introduce el índice
     scanf("%ld", &key);
     // 4. Recorriendo lista y borra esa tarea
-    int position = binary_search(this, key);
-    if (position != -1)
+    size_t position = lineal_search(this, key);
+    DLL_Cursor_front(this);
+    for (size_t i = 1; i < position; ++i)
     {
-      DLL_Cursor_front(this);
-      for (size_t i = 1; i < position; ++i)
-      {
-        DLL_Cursor_next(this);
-      }
-      DLL_Erase(this);
-      // Colocandonos en donde apartir de ahí vamos a cambiar el índice
+      DLL_Cursor_next(this);
+    }
+    DLL_Erase(this);
+    // Colocandonos en donde apartir de ahí vamos a cambiar el índice
+    if (!DLL_IsEmpty(this))
+    {
       DLL_Cursor_front(this);
       for (size_t i = 1; i < position; ++i)
       {
@@ -498,6 +485,7 @@ void Delete_task(DLL *this)
         DLL_Cursor_next(this);
       }
     }
+
     // 5. Muestra la lista sin esa tarea
     Show_tasks(this);
   }
@@ -533,7 +521,7 @@ void Complete_task(DLL *this)
     Show_tasks(this);
     printf("\nWhat task do you want to complete?: ");
     scanf("%ld", &num);
-    int position = binary_search(this, num);
+    size_t position = lineal_search(this, num);
     DLL_Cursor_front(this);
     for (size_t i = 1; i < position; ++i)
     {
@@ -561,7 +549,7 @@ void Pending_task(DLL *this)
     Show_tasks(this);
     printf("\nWhat task do you want to mark as pending?: ");
     scanf("%ld", &num);
-    int position = binary_search(this, num);
+    size_t position = lineal_search(this, num);
     DLL_Cursor_front(this);
     for (size_t i = 1; i < position; ++i)
     {
@@ -654,21 +642,19 @@ void Modify_task(DLL *this)
     Show_tasks(this);
     printf("\nWhat task would you like to modify?: ");
     scanf("%ld", &num);
-    int position = binary_search(this, num);
+    size_t position = lineal_search(this, num);
     // Moviéndonos en la lista
-    if (position != -1)
+
+    DLL_Cursor_front(this);
+    for (size_t i = 1; i < position; ++i)
     {
-      DLL_Cursor_front(this);
-      for (size_t i = 1; i < position; ++i)
-      {
-        DLL_Cursor_next(this);
-      }
-      getchar();
-      printf("\nTask name: ");
-      fgets((this->cursor->task).name, SIZE, stdin);
-      printf("In how many minutes do you think you´ll finish this task?: ");
-      scanf("%ld", &(this->cursor->task).time);
+      DLL_Cursor_next(this);
     }
+    getchar();
+    printf("\nTask name: ");
+    fgets((this->cursor->task).name, SIZE, stdin);
+    printf("In how many minutes do you think you´ll finish this task?: ");
+    scanf("%ld", &(this->cursor->task).time);
 
     // Muestra por ultimo la lista ya modificada
     Show_tasks(this);
@@ -752,6 +738,7 @@ void print_tasks_on_time(DLL *this, int *list, int index)
 void tasks_on_time(DLL *this)
 {
   int time = 0;
+  Show_tasks(this);
   printf("How many minutes do you have to complete tasks?: ");
   scanf("%d", &time);
   int sort[DLL_Len(this)];
@@ -761,11 +748,12 @@ void tasks_on_time(DLL *this)
   int acum = 0;
   if (time_bt(this, sort, aux, &index, time, 0, DLL_Len(this) - 1, &acum))
   {
-    printf("You have enough time to do this tasks:\n");
+    printf("You have enough time to do these tasks:\n");
     print_tasks_on_time(this, aux, index);
   }
   else
   {
     printf("There isn't enough time to do any task\n");
   }
+  printf("\n");
 }

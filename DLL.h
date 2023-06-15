@@ -75,7 +75,8 @@ bool DLL_Cursor_end(DLL *this);
 void DLL_Erase(DLL *this);
 
 // Para Task-----------------------------------------------------------------------------------------------
-int binary_search(DLL *this, size_t key);
+
+size_t lineal_search(DLL* this,size_t key);
 void Delete_task(DLL *this);
 void Add_task(DLL *this);
 void Modify_task(DLL *this);
@@ -89,6 +90,7 @@ void Show_Pending_t(DLL *this);
 bool time_bt(DLL *this, int *list, int *aux, int *index, int time, int first, int last, int *acum);
 void tasks_on_time(DLL *this);
 void print_tasks_on_time(DLL *this, int *list,int index);
+
 // void Sort_tasks(DLL *this);
 
 // Ordenamiento
